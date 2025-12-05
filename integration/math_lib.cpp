@@ -41,11 +41,11 @@ EXPORT double multiply(double a, double b) {
 
 /**
  * Divise deux nombres
- * Retourne 0 si division par zéro
+ * Retourne NaN si division par zéro
  */
 EXPORT double divide(double a, double b) {
     if (b == 0) {
-        return 0;
+        return std::nan("");
     }
     return a / b;
 }
@@ -59,10 +59,11 @@ EXPORT double power(double base, double exponent) {
 
 /**
  * Calcule la racine carrée
+ * Retourne NaN pour les nombres négatifs
  */
 EXPORT double sqrt_num(double n) {
     if (n < 0) {
-        return -1;
+        return std::nan("");
     }
     return std::sqrt(n);
 }

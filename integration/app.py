@@ -110,7 +110,7 @@ def py_multiply(a, b):
 
 def py_divide(a, b):
     if b == 0:
-        return 0
+        return float('nan')
     return a / b
 
 
@@ -120,7 +120,7 @@ def py_power(base, exp):
 
 def py_sqrt(n):
     if n < 0:
-        return -1
+        return float('nan')
     return python_math.sqrt(n)
 
 
