@@ -229,4 +229,5 @@ if __name__ == '__main__':
     print("Appuyez sur Ctrl+C pour arrêter")
     print("=" * 50 + "\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Note: debug=False for production security. Set to True only for development.
+    app.run(debug=False, host='0.0.0.0', port=5000)
