@@ -231,15 +231,10 @@
             if (!currentExpression) return;
 
             try {
-                // Validation simple pour éviter l'exécution de code malveillant
-                const sanitized = currentExpression.replace(/[^0-9+\-*/().]/g, '');
-                if (sanitized !== currentExpression) {
-                    throw new Error('Expression invalide');
-                }
+                // Utiliser un parseur d'expressions mathématiques sécurisé
+                const result = safeEvaluate(currentExpression);
 
-                const result = Function('"use strict"; return (' + sanitized + ')')();
-
-                if (isNaN(result) || !isFinite(result)) {
+                if (result === null || isNaN(result) || !isFinite(result)) {
                     throw new Error('Résultat invalide');
                 }
 
@@ -258,6 +253,113 @@
                     document.getElementById('display').textContent = '0';
                 }, 1500);
             }
+        }
+
+        /**
+         * Évaluateur d'expressions mathématiques sécurisé
+         * Supporte: +, -, *, /, parenthèses, nombres décimaux
+         */
+        function safeEvaluate(expression) {
+            // Tokenize l'expression
+            const tokens = tokenize(expression);
+            if (tokens === null) return null;
+
+            // Parse et évalue
+            let pos = 0;
+
+            function parseExpression() {
+                let left = parseTerm();
+                while (pos < tokens.length && (tokens[pos] === '+' || tokens[pos] === '-')) {
+                    const op = tokens[pos++];
+                    const right = parseTerm();
+                    left = op === '+' ? left + right : left - right;
+                }
+                return left;
+            }
+
+            function parseTerm() {
+                let left = parseFactor();
+                while (pos < tokens.length && (tokens[pos] === '*' || tokens[pos] === '/')) {
+                    const op = tokens[pos++];
+                    const right = parseFactor();
+                    if (op === '/') {
+                        if (right === 0) throw new Error('Division par zéro');
+                        left = left / right;
+                    } else {
+                        left = left * right;
+                    }
+                }
+                return left;
+            }
+
+            function parseFactor() {
+                // Gérer les nombres négatifs unaires
+                if (tokens[pos] === '-') {
+                    pos++;
+                    return -parseFactor();
+                }
+                if (tokens[pos] === '+') {
+                    pos++;
+                    return parseFactor();
+                }
+
+                if (tokens[pos] === '(') {
+                    pos++; // consommer '('
+                    const result = parseExpression();
+                    if (tokens[pos] !== ')') throw new Error('Parenthèse fermante manquante');
+                    pos++; // consommer ')'
+                    return result;
+                }
+
+                if (typeof tokens[pos] === 'number') {
+                    return tokens[pos++];
+                }
+
+                throw new Error('Token inattendu');
+            }
+
+            const result = parseExpression();
+            if (pos !== tokens.length) throw new Error('Expression invalide');
+            return result;
+        }
+
+        function tokenize(expression) {
+            const tokens = [];
+            let i = 0;
+
+            while (i < expression.length) {
+                const ch = expression[i];
+
+                // Ignorer les espaces
+                if (ch === ' ') {
+                    i++;
+                    continue;
+                }
+
+                // Opérateurs et parenthèses
+                if ('+-*/()'.includes(ch)) {
+                    tokens.push(ch);
+                    i++;
+                    continue;
+                }
+
+                // Nombres
+                if (/[0-9.]/.test(ch)) {
+                    let numStr = '';
+                    while (i < expression.length && /[0-9.]/.test(expression[i])) {
+                        numStr += expression[i++];
+                    }
+                    const num = parseFloat(numStr);
+                    if (isNaN(num)) return null;
+                    tokens.push(num);
+                    continue;
+                }
+
+                // Caractère invalide
+                return null;
+            }
+
+            return tokens;
         }
 
         // Support clavier

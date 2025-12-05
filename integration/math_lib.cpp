@@ -55,11 +55,11 @@ double multiplication(double a, double b) {
  * @brief Divise deux nombres
  * @param a Numérateur
  * @param b Dénominateur
- * @return Quotient de la division (retourne 0 si b est 0)
+ * @return Quotient de la division (retourne NaN si b est 0)
  */
 double division(double a, double b) {
     if (b == 0) {
-        return 0;  // Retourne 0 pour éviter une erreur
+        return std::nan("");  // Retourne NaN pour indiquer une erreur
     }
     return a / b;
 }
@@ -77,11 +77,11 @@ double puissance(double base, int exposant) {
 /**
  * @brief Calcule la racine carrée d'un nombre
  * @param n Nombre positif
- * @return Racine carrée de n (retourne 0 si n est négatif)
+ * @return Racine carrée de n (retourne NaN si n est négatif)
  */
 double racine_carree(double n) {
     if (n < 0) {
-        return 0;  // Retourne 0 pour éviter une erreur
+        return std::nan("");  // Retourne NaN pour indiquer une erreur
     }
     return std::sqrt(n);
 }
@@ -89,11 +89,11 @@ double racine_carree(double n) {
 /**
  * @brief Calcule la factorielle d'un nombre
  * @param n Nombre entier positif
- * @return Factorielle de n (retourne 1 si n est négatif)
+ * @return Factorielle de n (retourne 0 si n est négatif pour indiquer une erreur)
  */
 unsigned long long factorielle(int n) {
     if (n < 0) {
-        return 1;  // Retourne 1 pour éviter une erreur
+        return 0;  // Retourne 0 pour indiquer une erreur (factorielle n'est jamais 0 pour n >= 0)
     }
     if (n == 0 || n == 1) {
         return 1;
