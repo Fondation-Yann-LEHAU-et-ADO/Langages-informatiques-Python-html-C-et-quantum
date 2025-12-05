@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemple HTML/CSS/JavaScript Interactif</title>
+    <style>
+        /* Reset et styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* En-tête */
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Conteneur principal */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            max-width: 1200px;
+        }
+
+        /* Cartes */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            width: 350px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* Compteur */
+        .counter-display {
+            font-size: 3rem;
+            text-align: center;
+            color: #333;
+            margin: 1rem 0;
+            font-weight: bold;
+        }
+
+        .counter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        /* Boutons */
+        button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Liste de tâches */
+        .todo-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .todo-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .todo-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .todo-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem;
+            background: #f8f9fa;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .todo-item.completed span {
+            text-decoration: line-through;
+            color: #aaa;
+        }
+
+        .todo-item input[type="checkbox"] {
+            margin-right: 0.8rem;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .todo-item span {
+            flex: 1;
+        }
+
+        .todo-item .delete-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0;
+        }
+
+        /* Changeur de couleur */
+        .color-box {
+            width: 100%;
+            height: 150px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            transition: background-color 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Horloge */
+        .clock {
+            font-size: 2.5rem;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            margin: 1rem 0;
+        }
+
+        .date {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 2rem;
+            color: white;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card {
+                width: 100%;
+                max-width: 350px;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🚀 Exemples Interactifs</h1>
+        <p>Démonstration de HTML5, CSS3 et JavaScript moderne</p>
+    </header>
+
+    <div class="container">
+        <!-- Carte Compteur -->
+        <div class="card">
+            <h2>📊 Compteur</h2>
+            <div class="counter-display" id="counter">0</div>
+            <div class="counter-buttons">
+                <button class="btn-secondary" onclick="decrementCounter()">-</button>
+                <button class="btn-danger" onclick="resetCounter()">Reset</button>
+                <button class="btn-primary" onclick="incrementCounter()">+</button>
+            </div>
+        </div>
+
+        <!-- Carte Liste de Tâches -->
+        <div class="card">
+            <h2>📝 Liste de Tâches</h2>
+            <div class="todo-input">
+                <input type="text" id="todoInput" placeholder="Nouvelle tâche..." onkeypress="handleKeyPress(event)">
+                <button class="btn-primary" onclick="addTodo()">Ajouter</button>
+            </div>
+            <ul class="todo-list" id="todoList"></ul>
+        </div>
+
+        <!-- Carte Changeur de Couleur -->
+        <div class="card">
+            <h2>🎨 Changeur de Couleur</h2>
+            <div class="color-box" id="colorBox" style="background-color: #667eea;">
+                Cliquez sur le bouton !
+            </div>
+            <button class="btn-primary" onclick="changeColor()" style="width: 100%;">
+                Changer la couleur
+            </button>
+        </div>
+
+        <!-- Carte Horloge -->
+        <div class="card">
+            <h2>⏰ Horloge en Temps Réel</h2>
+            <div class="clock" id="clock">00:00:00</div>
+            <div class="date" id="date"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Créé avec ❤️ en HTML, CSS et JavaScript</p>
+    </footer>
+
+    <script>
+        // ====== COMPTEUR ======
+        let count = 0;
+
+        function incrementCounter() {
+            count++;
+            updateCounter();
+        }
+
+        function decrementCounter() {
+            count--;
+            updateCounter();
+        }
+
+        function resetCounter() {
+            count = 0;
+            updateCounter();
+        }
+
+        function updateCounter() {
+            const counterElement = document.getElementById('counter');
+            counterElement.textContent = count;
+            
+            // Animation
+            counterElement.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                counterElement.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // ====== LISTE DE TÂCHES ======
+        let todos = [];
+
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                todos.push({ text: text, completed: false });
+                input.value = '';
+                renderTodos();
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addTodo();
+            }
+        }
+
+        function toggleTodo(index) {
+            todos[index].completed = !todos[index].completed;
+            renderTodos();
+        }
+
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            renderTodos();
+        }
+
+        function renderTodos() {
+            const list = document.getElementById('todoList');
+            list.innerHTML = '';
+            
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.className = 'todo-item' + (todo.completed ? ' completed' : '');
+                li.innerHTML = `
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${index})">
+                    <span>${escapeHtml(todo.text)}</span>
+                    <button class="delete-btn" onclick="deleteTodo(${index})">×</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ====== CHANGEUR DE COULEUR ======
+        function changeColor() {
+            const colors = [
+                '#e74c3c', '#3498db', '#2ecc71', '#f39c12', 
+                '#9b59b6', '#1abc9c', '#e67e22', '#667eea'
+            ];
+            const colorBox = document.getElementById('colorBox');
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            colorBox.style.backgroundColor = randomColor;
+            colorBox.textContent = randomColor;
+        }
+
+        // ====== HORLOGE ======
+        function updateClock() {
+            const now = new Date();
+            
+            // Heure
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('fr-FR', options);
+        }
+
+        // Mise à jour de l'horloge chaque seconde
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Ajouter quelques tâches exemple
+        todos = [
+            { text: 'Apprendre HTML', completed: true },
+            { text: 'Maîtriser CSS', completed: true },
+            { text: 'Pratiquer JavaScript', completed: false }
+        ];
+        renderTodos();
+    </script>
+</body>
+</html>
