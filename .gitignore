@@ -29,3 +29,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# CodeQL artifacts
+_codeql_*
