@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Interactive - Exemple HTML</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            color: #667eea;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .calculator-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px dashed #e0e0e0;
+        }
+
+        .calculator-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .calculator-row input {
+            flex: 1;
+        }
+
+        .calculator-row select {
+            width: 80px;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #888;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 Page Interactive</h1>
+        
+        <!-- Section Salutation -->
+        <section>
+            <h2 style="color: #667eea; margin-bottom: 20px;">Salutation Personnalisée</h2>
+            <div class="form-group">
+                <label for="nom">Entrez votre nom :</label>
+                <input type="text" id="nom" placeholder="Votre nom...">
+            </div>
+            <button class="btn" onclick="saluer()">Saluer</button>
+            <div id="salutation" class="result">
+                <h3>Bonjour !</h3>
+                <p id="message-salutation"></p>
+            </div>
+        </section>
+
+        <!-- Section Calculatrice -->
+        <section class="calculator-section">
+            <h2 style="color: #667eea; margin-bottom: 20px;">🔢 Calculatrice</h2>
+            <div class="calculator-row">
+                <input type="number" id="nombre1" placeholder="Nombre 1">
+                <select id="operation">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                    <option value="*">×</option>
+                    <option value="/">÷</option>
+                    <option value="^">^</option>
+                </select>
+                <input type="number" id="nombre2" placeholder="Nombre 2">
+            </div>
+            <button class="btn" onclick="calculer()">Calculer</button>
+            <div id="resultat-calcul" class="result">
+                <h3>Résultat</h3>
+                <p id="valeur-resultat"></p>
+            </div>
+        </section>
+
+        <!-- Section Compteur -->
+        <section class="calculator-section">
+            <h2 style="color: #667eea; margin-bottom: 20px;">⏱️ Compteur Interactif</h2>
+            <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                <button class="btn" style="width: auto; padding: 15px 25px;" onclick="decrementer()">-</button>
+                <span id="compteur" style="font-size: 2em; font-weight: bold; color: #667eea; min-width: 60px; text-align: center;">0</span>
+                <button class="btn" style="width: auto; padding: 15px 25px;" onclick="incrementer()">+</button>
+            </div>
+            <button class="btn" onclick="reinitialiser()">Réinitialiser</button>
+        </section>
+
+        <footer>
+            <p>Exemple de page HTML interactive avec CSS et JavaScript</p>
+            <p>Fondation Yann LEHAU et ADO</p>
+        </footer>
+    </div>
+
+    <script>
+        // Variable pour le compteur
+        let compteur = 0;
+
+        /**
+         * Fonction de salutation
+         * Affiche un message de bienvenue personnalisé
+         */
+        function saluer() {
+            const nom = document.getElementById('nom').value.trim();
+            const salutation = document.getElementById('salutation');
+            const message = document.getElementById('message-salutation');
+            
+            if (nom) {
+                message.textContent = `Bienvenue, ${nom} ! 👋`;
+            } else {
+                message.textContent = 'Bienvenue, visiteur anonyme ! 👋';
+            }
+            salutation.classList.add('show');
+        }
+
+        /**
+         * Fonction de calcul
+         * Effectue l'opération mathématique sélectionnée
+         */
+        function calculer() {
+            const n1 = parseFloat(document.getElementById('nombre1').value);
+            const n2 = parseFloat(document.getElementById('nombre2').value);
+            const op = document.getElementById('operation').value;
+            const resultatDiv = document.getElementById('resultat-calcul');
+            const valeurResultat = document.getElementById('valeur-resultat');
+            
+            if (isNaN(n1) || isNaN(n2)) {
+                valeurResultat.textContent = 'Veuillez entrer des nombres valides';
+                resultatDiv.classList.add('show');
+                return;
+            }
+
+            let resultat;
+            switch (op) {
+                case '+':
+                    resultat = n1 + n2;
+                    break;
+                case '-':
+                    resultat = n1 - n2;
+                    break;
+                case '*':
+                    resultat = n1 * n2;
+                    break;
+                case '/':
+                    if (n2 === 0) {
+                        valeurResultat.textContent = 'Erreur : Division par zéro !';
+                        resultatDiv.classList.add('show');
+                        return;
+                    }
+                    resultat = n1 / n2;
+                    break;
+                case '^':
+                    resultat = Math.pow(n1, n2);
+                    break;
+            }
+
+            valeurResultat.textContent = `${n1} ${op} ${n2} = ${resultat}`;
+            resultatDiv.classList.add('show');
+        }
+
+        /**
+         * Incrémente le compteur
+         */
+        function incrementer() {
+            compteur++;
+            mettreAJourCompteur();
+        }
+
+        /**
+         * Décrémente le compteur
+         */
+        function decrementer() {
+            compteur--;
+            mettreAJourCompteur();
+        }
+
+        /**
+         * Réinitialise le compteur à zéro
+         */
+        function reinitialiser() {
+            compteur = 0;
+            mettreAJourCompteur();
+        }
+
+        /**
+         * Met à jour l'affichage du compteur
+         */
+        function mettreAJourCompteur() {
+            document.getElementById('compteur').textContent = compteur;
+        }
+
+        // Permet d'utiliser la touche Entrée pour soumettre
+        document.getElementById('nom').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                saluer();
+            }
+        });
+
+        document.getElementById('nombre1').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculer();
+            }
+        });
+
+        document.getElementById('nombre2').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculer();
+            }
+        });
+    </script>
+</body>
+</html>

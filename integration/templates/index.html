@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intégration Python + C++ + HTML</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .status.cpp-loaded {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .status.cpp-not-loaded {
+            background: rgba(255, 170, 0, 0.2);
+            border: 1px solid #ffaa00;
+            color: #ffaa00;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card h2 {
+            color: #00d9ff;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 span {
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row input {
+            flex: 1;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00d9ff;
+        }
+
+        input::placeholder {
+            color: #666;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00d9ff, #00ff88);
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-value {
+            font-size: 1.5em;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .result-backend {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .result.error .result-value {
+            color: #ff6b6b;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+        }
+
+        footer a {
+            color: #00d9ff;
+            text-decoration: none;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tech {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .tech-icon {
+            font-size: 1.5em;
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Intégration Multi-Langages</h1>
+            <p>Python (Flask) + C++ (ctypes) + HTML/CSS/JS</p>
+            {% if cpp_loaded %}
+            <div class="status cpp-loaded">✓ Bibliothèque C++ chargée</div>
+            {% else %}
+            <div class="status cpp-not-loaded">⚠ Mode Python (C++ non compilé)</div>
+            {% endif %}
+        </header>
+
+        <div class="tech-stack">
+            <div class="tech">
+                <span class="tech-icon">🐍</span>
+                <span>Python Flask</span>
+            </div>
+            <div class="tech">
+                <span class="tech-icon">⚡</span>
+                <span>C++ (ctypes)</span>
+            </div>
+            <div class="tech">
+                <span class="tech-icon">🌐</span>
+                <span>HTML/CSS/JS</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Calculatrice de base -->
+            <div class="card">
+                <h2><span>🔢</span> Calculatrice</h2>
+                <div class="form-row">
+                    <input type="number" id="calc-a" placeholder="Nombre 1">
+                    <select id="calc-op">
+                        <option value="add">+</option>
+                        <option value="subtract">-</option>
+                        <option value="multiply">×</option>
+                        <option value="divide">÷</option>
+                    </select>
+                    <input type="number" id="calc-b" placeholder="Nombre 2">
+                </div>
+                <button class="btn btn-primary" onclick="calculate()">Calculer</button>
+                <div id="calc-result" class="result">
+                    <div class="result-value"></div>
+                    <div class="result-backend"></div>
+                </div>
+            </div>
+
+            <!-- Puissance et Racine -->
+            <div class="card">
+                <h2><span>📐</span> Puissance & Racine</h2>
+                <div class="form-group">
+                    <label>Puissance (base ^ exposant)</label>
+                    <div class="form-row">
+                        <input type="number" id="power-base" placeholder="Base">
+                        <input type="number" id="power-exp" placeholder="Exposant">
+                    </div>
+                    <button class="btn btn-primary" onclick="calcPower()">Calculer</button>
+                </div>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Racine carrée</label>
+                    <input type="number" id="sqrt-n" placeholder="Nombre">
+                    <button class="btn btn-primary" onclick="calcSqrt()">Calculer</button>
+                </div>
+                <div id="power-result" class="result">
+                    <div class="result-value"></div>
+                    <div class="result-backend"></div>
+                </div>
+            </div>
+
+            <!-- Factorielle et Fibonacci -->
+            <div class="card">
+                <h2><span>🔄</span> Factorielle & Fibonacci</h2>
+                <div class="form-group">
+                    <label>Factorielle (n!)</label>
+                    <input type="number" id="fact-n" placeholder="n" min="0">
+                    <button class="btn btn-primary" onclick="calcFactorial()">Calculer</button>
+                </div>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label>Fibonacci (F(n))</label>
+                    <input type="number" id="fib-n" placeholder="n" min="0">
+                    <button class="btn btn-primary" onclick="calcFibonacci()">Calculer</button>
+                </div>
+                <div id="seq-result" class="result">
+                    <div class="result-value"></div>
+                    <div class="result-backend"></div>
+                </div>
+            </div>
+
+            <!-- Nombres premiers -->
+            <div class="card">
+                <h2><span>🔍</span> Test Nombre Premier</h2>
+                <div class="form-group">
+                    <label>Vérifier si un nombre est premier</label>
+                    <input type="number" id="prime-n" placeholder="Nombre">
+                    <button class="btn btn-primary" onclick="checkPrime()">Vérifier</button>
+                </div>
+                <div id="prime-result" class="result">
+                    <div class="result-value"></div>
+                    <div class="result-backend"></div>
+                </div>
+            </div>
+
+            <!-- PGCD et PPCM -->
+            <div class="card">
+                <h2><span>🎯</span> PGCD & PPCM</h2>
+                <div class="form-row">
+                    <input type="number" id="gcd-a" placeholder="Nombre 1">
+                    <input type="number" id="gcd-b" placeholder="Nombre 2">
+                </div>
+                <button class="btn btn-primary" onclick="calcGCD()">PGCD</button>
+                <button class="btn btn-primary" onclick="calcLCM()">PPCM</button>
+                <div id="gcd-result" class="result">
+                    <div class="result-value"></div>
+                    <div class="result-backend"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Application d'intégration - <a href="https://github.com/Fondation-Yann-LEHAU-et-ADO">Fondation Yann LEHAU et ADO</a></p>
+            <p>Les calculs sont effectués via la bibliothèque C++ (si compilée) ou en Python</p>
+        </footer>
+    </div>
+
+    <script>
+        /**
+         * Effectue une requête de calcul vers le backend
+         */
+        async function apiCall(operation, data, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.classList.remove('show', 'error');
+            
+            try {
+                const response = await fetch('/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ operation, ...data })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.querySelector('.result-value').textContent = 
+                        result.message || `Résultat : ${result.result}`;
+                    resultDiv.querySelector('.result-backend').textContent = 
+                        `Calculé avec : ${result.backend}`;
+                } else {
+                    resultDiv.classList.add('error');
+                    resultDiv.querySelector('.result-value').textContent = 
+                        `Erreur : ${result.error}`;
+                    resultDiv.querySelector('.result-backend').textContent = '';
+                }
+                
+                resultDiv.classList.add('show');
+            } catch (error) {
+                resultDiv.classList.add('error', 'show');
+                resultDiv.querySelector('.result-value').textContent = 
+                    `Erreur de connexion`;
+                resultDiv.querySelector('.result-backend').textContent = '';
+            }
+        }
+
+        // Calculatrice de base
+        function calculate() {
+            const a = document.getElementById('calc-a').value;
+            const b = document.getElementById('calc-b').value;
+            const op = document.getElementById('calc-op').value;
+            apiCall(op, { a, b }, 'calc-result');
+        }
+
+        // Puissance
+        function calcPower() {
+            const base = document.getElementById('power-base').value;
+            const exp = document.getElementById('power-exp').value;
+            apiCall('power', { base, exp }, 'power-result');
+        }
+
+        // Racine carrée
+        function calcSqrt() {
+            const n = document.getElementById('sqrt-n').value;
+            apiCall('sqrt', { n }, 'power-result');
+        }
+
+        // Factorielle
+        function calcFactorial() {
+            const n = document.getElementById('fact-n').value;
+            apiCall('factorial', { n }, 'seq-result');
+        }
+
+        // Fibonacci
+        function calcFibonacci() {
+            const n = document.getElementById('fib-n').value;
+            apiCall('fibonacci', { n }, 'seq-result');
+        }
+
+        // Nombre premier
+        function checkPrime() {
+            const n = document.getElementById('prime-n').value;
+            apiCall('is_prime', { n }, 'prime-result');
+        }
+
+        // PGCD
+        function calcGCD() {
+            const a = document.getElementById('gcd-a').value;
+            const b = document.getElementById('gcd-b').value;
+            apiCall('gcd', { a, b }, 'gcd-result');
+        }
+
+        // PPCM
+        function calcLCM() {
+            const a = document.getElementById('gcd-a').value;
+            const b = document.getElementById('gcd-b').value;
+            apiCall('lcm', { a, b }, 'gcd-result');
+        }
+
+        // Permettre l'utilisation de la touche Entrée
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const card = this.closest('.card');
+                    const btn = card.querySelector('.btn-primary');
+                    if (btn) btn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
