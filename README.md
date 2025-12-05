@@ -83,6 +83,11 @@ cd integration
 python app.py
 ```
 
+Pour activer le mode debug (développement uniquement) :
+```bash
+FLASK_DEBUG=1 python app.py
+```
+
 Puis ouvrir http://localhost:5000 dans un navigateur.
 
 ## Prérequis

@@ -274,4 +274,7 @@ if __name__ == '__main__':
     print("Ouvrez http://localhost:5000 dans votre navigateur")
     print("=" * 60 + "\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Debug mode is disabled by default for security
+    # Set FLASK_DEBUG=1 in environment to enable debug mode during development
+    debug_mode = os.environ.get('FLASK_DEBUG', '0') == '1'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
