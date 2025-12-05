@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démonstration HTML - Calculatrice</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .calculator {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .display {
+            background: #1a1a2e;
+            color: #00ff88;
+            font-size: 2em;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: right;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            word-break: break-all;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 20px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-number {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .btn-number:hover {
+            background: #dee2e6;
+        }
+
+        .btn-operator {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-operator:hover {
+            background: #5a6fd6;
+        }
+
+        .btn-equals {
+            background: #28a745;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn-equals:hover {
+            background: #218838;
+        }
+
+        .btn-clear {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #c82333;
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .result-section h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        .result-section p {
+            color: #1b5e20;
+            font-size: 1.1em;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #999;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧮 Calculatrice HTML/JS</h1>
+
+        <p class="description">
+            Cette page démontre l'utilisation de HTML5, CSS3 et JavaScript
+            pour créer une calculatrice interactive.
+        </p>
+
+        <div class="calculator">
+            <div class="display" id="display">0</div>
+
+            <div class="buttons">
+                <button class="btn btn-clear" onclick="clearDisplay()">C</button>
+                <button class="btn btn-operator" onclick="appendToDisplay('(')">(</button>
+                <button class="btn btn-operator" onclick="appendToDisplay(')')">)</button>
+                <button class="btn btn-operator" onclick="appendToDisplay('/')">&divide;</button>
+
+                <button class="btn btn-number" onclick="appendToDisplay('7')">7</button>
+                <button class="btn btn-number" onclick="appendToDisplay('8')">8</button>
+                <button class="btn btn-number" onclick="appendToDisplay('9')">9</button>
+                <button class="btn btn-operator" onclick="appendToDisplay('*')">&times;</button>
+
+                <button class="btn btn-number" onclick="appendToDisplay('4')">4</button>
+                <button class="btn btn-number" onclick="appendToDisplay('5')">5</button>
+                <button class="btn btn-number" onclick="appendToDisplay('6')">6</button>
+                <button class="btn btn-operator" onclick="appendToDisplay('-')">-</button>
+
+                <button class="btn btn-number" onclick="appendToDisplay('1')">1</button>
+                <button class="btn btn-number" onclick="appendToDisplay('2')">2</button>
+                <button class="btn btn-number" onclick="appendToDisplay('3')">3</button>
+                <button class="btn btn-operator" onclick="appendToDisplay('+')">+</button>
+
+                <button class="btn btn-number" onclick="appendToDisplay('0')">0</button>
+                <button class="btn btn-number" onclick="appendToDisplay('.')">.</button>
+                <button class="btn btn-equals" onclick="calculate()">=</button>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <h3>📊 Historique</h3>
+            <p id="history">Aucun calcul effectué</p>
+        </div>
+
+        <footer>
+            <p>Démonstration HTML/CSS/JavaScript</p>
+            <p>Fondation Yann LEHAU et ADO</p>
+        </footer>
+    </div>
+
+    <script>
+        let currentExpression = '';
+        let history = [];
+
+        function appendToDisplay(value) {
+            if (currentExpression === '0' && value !== '.') {
+                currentExpression = value;
+            } else {
+                currentExpression += value;
+            }
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentExpression = '';
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const display = document.getElementById('display');
+            display.textContent = currentExpression || '0';
+        }
+
+        function calculate() {
+            if (!currentExpression) return;
+
+            try {
+                // Utiliser un parseur d'expressions mathématiques sécurisé
+                const result = safeEvaluate(currentExpression);
+
+                if (result === null || isNaN(result) || !isFinite(result)) {
+                    throw new Error('Résultat invalide');
+                }
+
+                // Ajouter à l'historique
+                history.unshift(`${currentExpression} = ${result}`);
+                if (history.length > 5) history.pop();
+
+                document.getElementById('history').textContent = history.join(' | ');
+
+                currentExpression = String(result);
+                updateDisplay();
+            } catch {
+                currentExpression = '';
+                document.getElementById('display').textContent = 'Erreur';
+                setTimeout(() => {
+                    document.getElementById('display').textContent = '0';
+                }, 1500);
+            }
+        }
+
+        /**
+         * Évaluateur d'expressions mathématiques sécurisé
+         * Supporte: +, -, *, /, parenthèses, nombres décimaux
+         */
+        function safeEvaluate(expression) {
+            // Tokenize l'expression
+            const tokens = tokenize(expression);
+            if (tokens === null) return null;
+
+            // Parse et évalue
+            let pos = 0;
+
+            function parseExpression() {
+                let left = parseTerm();
+                while (pos < tokens.length && (tokens[pos] === '+' || tokens[pos] === '-')) {
+                    const op = tokens[pos++];
+                    const right = parseTerm();
+                    left = op === '+' ? left + right : left - right;
+                }
+                return left;
+            }
+
+            function parseTerm() {
+                let left = parseFactor();
+                while (pos < tokens.length && (tokens[pos] === '*' || tokens[pos] === '/')) {
+                    const op = tokens[pos++];
+                    const right = parseFactor();
+                    if (op === '/') {
+                        if (right === 0) throw new Error('Division par zéro');
+                        left = left / right;
+                    } else {
+                        left = left * right;
+                    }
+                }
+                return left;
+            }
+
+            function parseFactor() {
+                // Gérer les nombres négatifs unaires
+                if (tokens[pos] === '-') {
+                    pos++;
+                    return -parseFactor();
+                }
+                if (tokens[pos] === '+') {
+                    pos++;
+                    return parseFactor();
+                }
+
+                if (tokens[pos] === '(') {
+                    pos++; // consommer '('
+                    const result = parseExpression();
+                    if (tokens[pos] !== ')') throw new Error('Parenthèse fermante manquante');
+                    pos++; // consommer ')'
+                    return result;
+                }
+
+                if (typeof tokens[pos] === 'number') {
+                    return tokens[pos++];
+                }
+
+                throw new Error('Token inattendu');
+            }
+
+            const result = parseExpression();
+            if (pos !== tokens.length) throw new Error('Expression invalide');
+            return result;
+        }
+
+        function tokenize(expression) {
+            const tokens = [];
+            let i = 0;
+
+            while (i < expression.length) {
+                const ch = expression[i];
+
+                // Ignorer les espaces
+                if (ch === ' ') {
+                    i++;
+                    continue;
+                }
+
+                // Opérateurs et parenthèses
+                if ('+-*/()'.includes(ch)) {
+                    tokens.push(ch);
+                    i++;
+                    continue;
+                }
+
+                // Nombres
+                if (/[0-9.]/.test(ch)) {
+                    let numStr = '';
+                    while (i < expression.length && /[0-9.]/.test(expression[i])) {
+                        numStr += expression[i++];
+                    }
+                    const num = parseFloat(numStr);
+                    if (isNaN(num)) return null;
+                    tokens.push(num);
+                    continue;
+                }
+
+                // Caractère invalide
+                return null;
+            }
+
+            return tokens;
+        }
+
+        // Support clavier
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if (/[0-9+\-*/().=]/.test(key)) {
+                event.preventDefault();
+                if (key === '=') {
+                    calculate();
+                } else {
+                    appendToDisplay(key);
+                }
+            } else if (key === 'Enter') {
+                event.preventDefault();
+                calculate();
+            } else if (key === 'Escape' || key === 'c' || key === 'C') {
+                event.preventDefault();
+                clearDisplay();
+            } else if (key === 'Backspace') {
+                event.preventDefault();
+                currentExpression = currentExpression.slice(0, -1);
+                updateDisplay();
+            }
+        });
+    </script>
+</body>
+</html>

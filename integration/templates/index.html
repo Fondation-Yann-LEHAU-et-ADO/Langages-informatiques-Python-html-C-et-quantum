@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intégration Python/HTML/C++</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        .status-banner {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.active {
+            background: #00ff88;
+        }
+
+        .status-indicator.inactive {
+            background: #ff6b6b;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 1.5em;
+        }
+
+        .calculator-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .calculator-section h2 {
+            color: #00ff88;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        select option {
+            background: #1a1a2e;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            color: #1a1a2e;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .result-box {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result-box.visible {
+            display: block;
+        }
+
+        .result-box h4 {
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .result-meta {
+            color: #888;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .error-box {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            color: #ff6b6b;
+        }
+
+        .error-box.visible {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            color: #666;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .language-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+
+        .badge-python {
+            background: rgba(55, 118, 171, 0.3);
+            color: #3776ab;
+        }
+
+        .badge-cpp {
+            background: rgba(0, 89, 156, 0.3);
+            color: #659bd3;
+        }
+
+        .badge-html {
+            background: rgba(227, 79, 38, 0.3);
+            color: #e34f26;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔗 Intégration Multi-Langages</h1>
+            <p class="subtitle">Démonstration de l'interopérabilité Python, HTML et C++</p>
+        </header>
+
+        <div class="status-banner">
+            <span class="status-indicator {% if cpp_available %}active{% else %}inactive{% endif %}"></span>
+            <span>
+                Bibliothèque C++:
+                {% if cpp_available %}
+                    <strong style="color: #00ff88;">Disponible</strong> - Les calculs utilisent le code C++ compilé
+                {% else %}
+                    <strong style="color: #ff6b6b;">Non disponible</strong> - Les calculs utilisent Python comme fallback
+                {% endif %}
+            </span>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h3><span class="card-icon">🐍</span> Python (Flask)</h3>
+                <p>Le backend est développé en Python avec le framework Flask. Il gère les requêtes HTTP et orchestre les calculs.</p>
+                <span class="language-badge badge-python">Python 3</span>
+                <span class="language-badge badge-python">Flask</span>
+            </div>
+            <div class="card">
+                <h3><span class="card-icon">📄</span> HTML/CSS/JS</h3>
+                <p>L'interface utilisateur est construite avec HTML5, CSS3 et JavaScript vanilla pour une expérience réactive.</p>
+                <span class="language-badge badge-html">HTML5</span>
+                <span class="language-badge badge-html">CSS3</span>
+            </div>
+            <div class="card">
+                <h3><span class="card-icon">⚡</span> C++ (ctypes)</h3>
+                <p>Les opérations mathématiques peuvent être exécutées via une bibliothèque C++ pour des performances optimales.</p>
+                <span class="language-badge badge-cpp">C++</span>
+                <span class="language-badge badge-cpp">ctypes</span>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>🧮 Calculatrice Multi-Langages</h2>
+
+            <form id="calculatorForm">
+                <div class="form-group">
+                    <label for="operation">Opération</label>
+                    <select id="operation" name="operation" onchange="updateFormFields()">
+                        <option value="addition">Addition (a + b)</option>
+                        <option value="soustraction">Soustraction (a - b)</option>
+                        <option value="multiplication">Multiplication (a × b)</option>
+                        <option value="division">Division (a ÷ b)</option>
+                        <option value="puissance">Puissance (a^b)</option>
+                        <option value="racine_carree">Racine carrée (√a)</option>
+                        <option value="factorielle">Factorielle (a!)</option>
+                        <option value="est_premier">Est premier? (a)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="a">Valeur A</label>
+                        <input type="number" id="a" name="a" step="any" value="10" required>
+                    </div>
+                    <div class="form-group" id="bGroup">
+                        <label for="b">Valeur B</label>
+                        <input type="number" id="b" name="b" step="any" value="3">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Calculer</button>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">Réinitialiser</button>
+            </form>
+
+            <div class="result-box" id="resultBox">
+                <h4>📊 Résultat</h4>
+                <div class="result-value" id="resultValue"></div>
+                <div class="result-meta" id="resultMeta"></div>
+            </div>
+
+            <div class="error-box" id="errorBox"></div>
+        </div>
+
+        <footer>
+            <p>Fondation Yann LEHAU et ADO</p>
+            <p>
+                <a href="/api/info">API Info</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function updateFormFields() {
+            const operation = document.getElementById('operation').value;
+            const bGroup = document.getElementById('bGroup');
+            const bInput = document.getElementById('b');
+
+            const singleParamOps = ['racine_carree', 'factorielle', 'est_premier'];
+
+            if (singleParamOps.includes(operation)) {
+                bGroup.style.display = 'none';
+                bInput.removeAttribute('required');
+            } else {
+                bGroup.style.display = 'block';
+                bInput.setAttribute('required', '');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('calculatorForm').reset();
+            document.getElementById('resultBox').classList.remove('visible');
+            document.getElementById('errorBox').classList.remove('visible');
+            updateFormFields();
+        }
+
+        document.getElementById('calculatorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const operation = document.getElementById('operation').value;
+            const a = parseFloat(document.getElementById('a').value);
+            const b = parseFloat(document.getElementById('b').value);
+
+            const resultBox = document.getElementById('resultBox');
+            const errorBox = document.getElementById('errorBox');
+
+            resultBox.classList.remove('visible');
+            errorBox.classList.remove('visible');
+
+            try {
+                const response = await fetch('/api/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        operation: operation,
+                        a: a,
+                        b: isNaN(b) ? null : b
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    let resultDisplay = data.result;
+
+                    if (operation === 'est_premier') {
+                        resultDisplay = data.result ? '✅ Oui, c\'est un nombre premier' : '❌ Non, ce n\'est pas un nombre premier';
+                    } else if (typeof data.result === 'number') {
+                        resultDisplay = Number.isInteger(data.result) ? data.result : data.result.toFixed(6);
+                    }
+
+                    document.getElementById('resultValue').textContent = resultDisplay;
+
+                    const backend = data.using_cpp ? 'C++ (via ctypes)' : 'Python';
+                    document.getElementById('resultMeta').textContent =
+                        `Opération: ${operation} | Backend: ${backend}`;
+
+                    resultBox.classList.add('visible');
+                } else {
+                    errorBox.textContent = `❌ Erreur: ${data.error}`;
+                    errorBox.classList.add('visible');
+                }
+            } catch (error) {
+                errorBox.textContent = `❌ Erreur de connexion: ${error.message}`;
+                errorBox.classList.add('visible');
+            }
+        });
+
+        // Initialiser l'état du formulaire
+        updateFormFields();
+    </script>
+</body>
+</html>
