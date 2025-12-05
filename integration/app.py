@@ -322,4 +322,7 @@ if __name__ == '__main__':
     print("   Démarrage du serveur sur http://localhost:5000")
     print("=" * 60 + "\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Note: debug=True is for development only
+    # In production, set FLASK_DEBUG=0 environment variable
+    debug_mode = os.environ.get('FLASK_DEBUG', '1') == '1'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
