@@ -27,7 +27,7 @@ extern "C" {
 
     // Division
     double divide(double a, double b) {
-        if (b == 0) return 0;  // Gestion simple de l'erreur
+        if (b == 0) return std::nan("");  // Return NaN for division by zero
         return a / b;
     }
 
@@ -38,7 +38,7 @@ extern "C" {
 
     // Racine carrée
     double sqrt_calc(double n) {
-        if (n < 0) return -1;  // Erreur
+        if (n < 0) return std::nan("");  // Return NaN for negative input
         return std::sqrt(n);
     }
 
