@@ -226,7 +226,10 @@ def info():
 
 
 if __name__ == "__main__":
+    import os
     print("=== Application d'intégration Python/HTML/C++ ===")
     print(f"Bibliothèque C++: {'Disponible' if get_math_lib() else 'Non disponible'}")
     print("Démarrage du serveur sur http://localhost:5000")
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    # Debug mode controlled by environment variable for security
+    debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(debug=debug_mode, host="127.0.0.1", port=5000)
