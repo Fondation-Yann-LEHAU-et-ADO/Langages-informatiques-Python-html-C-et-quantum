@@ -116,7 +116,7 @@ class PythonMath:
     
     @staticmethod
     def divide(a: float, b: float) -> float:
-        if b == 0:
+        if abs(b) < 1e-10:
             raise ValueError("Division par zéro")
         return a / b
     

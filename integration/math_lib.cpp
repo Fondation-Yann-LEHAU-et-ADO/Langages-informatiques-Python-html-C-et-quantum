@@ -16,6 +16,7 @@
  *   result = lib.add(5.0, 3.0)
  */
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <map>
 

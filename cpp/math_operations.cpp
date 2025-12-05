@@ -10,6 +10,7 @@
  * - Les templates et la généricité
  */
 
+#define _USE_MATH_DEFINES
 #include <iostream>
 #include <vector>
 #include <map>
