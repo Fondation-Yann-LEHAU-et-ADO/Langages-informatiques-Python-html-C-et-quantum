@@ -39,3 +39,6 @@ instance/
 # Environment
 .env
 .env.local
+
+# CodeQL
+_codeql_detected_source_root
